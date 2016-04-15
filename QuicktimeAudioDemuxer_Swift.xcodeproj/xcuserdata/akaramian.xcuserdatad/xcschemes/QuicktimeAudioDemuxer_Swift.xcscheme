@@ -61,6 +61,12 @@
             ReferencedContainer = "container:QuicktimeAudioDemuxer_Swift.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/Users/akaramian/Desktop/PMT_OUTPUT.mov"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

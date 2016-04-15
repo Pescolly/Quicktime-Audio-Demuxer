@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DE19E57B1CC181DD00FE820E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE19E57A1CC181DD00FE820E /* main.swift */; };
+		DE19E5821CC1A17500FE820E /* AudioFileExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE19E5811CC1A17500FE820E /* AudioFileExporter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		DE19E5771CC181DD00FE820E /* QuicktimeAudioDemuxer_Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = QuicktimeAudioDemuxer_Swift; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE19E57A1CC181DD00FE820E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		DE19E5811CC1A17500FE820E /* AudioFileExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFileExporter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				DE19E57A1CC181DD00FE820E /* main.swift */,
+				DE19E5811CC1A17500FE820E /* AudioFileExporter.swift */,
 			);
 			path = QuicktimeAudioDemuxer_Swift;
 			sourceTree = "<group>";
@@ -120,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE19E57B1CC181DD00FE820E /* main.swift in Sources */,
+				DE19E5821CC1A17500FE820E /* AudioFileExporter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
