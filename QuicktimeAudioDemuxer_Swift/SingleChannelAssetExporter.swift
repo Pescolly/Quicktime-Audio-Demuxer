@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-class AudioFileExporter
+class SingleChannelAssetExporter
 {
 	//main path where exports go
 	let exportDirectory:NSURL?
@@ -19,11 +19,17 @@ class AudioFileExporter
 		self.exportDirectory = inExportDirectory
 	}
 	
+/*	NOT SUPPORTED BY SHIT API
 	func exportStereoPair(audioTrack1:AVAssetTrack, audioTrack2:AVAssetTrack, audioTrackName:String)
 	{
 		print("Exporting Stereo Pair",audioTrackName)
+		//setup export path
+		let exportFileName = self.exportDirectory?.URLByAppendingPathComponent(audioTrackName+".wav")
+		
+		let assetExporter = MultichannelAssetExporter(inAsset: <#T##AVAsset#>)
+
 	}
-	
+*/
 	func exportSingleStem(audioTrack:AVAssetTrack, audioTrackName:String)
 	{
 		//setup export path
@@ -45,7 +51,8 @@ class AudioFileExporter
 								print("Export Complete", exportFileName?.path!)
 								dispatch_semaphore_signal(exportDoneSemaphore)
 							case AVAssetExportSessionStatus.Failed:
-								print("Export Failed: Check to see if destination file exists")
+								print("Export Failed:",exportSession.error?.localizedDescription)
+								print(exportSession.error?.localizedFailureReason)
 								dispatch_semaphore_signal(exportDoneSemaphore)
 							default:
 								print("Cannot export")
@@ -57,12 +64,13 @@ class AudioFileExporter
 				dispatch_semaphore_wait(exportDoneSemaphore, DISPATCH_TIME_FOREVER);
 			}
 		}
-		
 	}
 	
 	func createExportSession(exportComposition : AVMutableComposition, exportFileName : NSURL) -> AVAssetExportSession?
 	{
 		let exportSession = AVAssetExportSession(asset: exportComposition, presetName: AVAssetExportPresetPassthrough)
+		
+		//exportSession?.audioMix
 		exportSession?.outputFileType = AVFileTypeWAVE
 		exportSession?.outputURL = exportFileName
 		return exportSession
@@ -83,4 +91,24 @@ class AudioFileExporter
 			return nil
 		}
 	}
+	/*	NOT SUPPORTED BY SHIT API
+	func createStereoExportComposition(audioTrack1 : AVAssetTrack, audioTrack2 : AVAssetTrack) -> AVMutableComposition?
+	{
+		do
+		{
+			let exportComposition = AVMutableComposition()
+			let exportTrack1 = exportComposition.addMutableTrackWithMediaType(AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+			try exportTrack1.insertTimeRange(audioTrack1.timeRange, ofTrack: audioTrack1, atTime: kCMTimeZero)
+			
+			let exportTrack2 = exportComposition.addMutableTrackWithMediaType(AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+			try exportTrack2.insertTimeRange(audioTrack2.timeRange, ofTrack: audioTrack2, atTime: kCMTimeZero)
+			
+			return exportComposition
+		}
+		catch
+		{
+			print("Cannot export")
+			return nil
+		}
+	}*/
 }

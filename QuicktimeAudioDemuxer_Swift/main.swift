@@ -14,6 +14,8 @@ import AVFoundation
 let inputFile = Process.arguments[1]
 let inputFileURL = NSURL(fileURLWithPath: inputFile)
 
+let filename = inputFileURL.lastPathComponent?.stringByReplacingOccurrencesOfString(".mov", withString: "_")
+
 //get path of export directory and append new stems folder
 var exportDirectory = inputFileURL.URLByDeletingLastPathComponent
 exportDirectory = exportDirectory?.URLByAppendingPathComponent("AUDIO_STEMS")
@@ -44,7 +46,7 @@ let qtAudioTracks = qtAsset.tracksWithMediaType(AVMediaTypeAudio)
 //determine number of tracks
 let audioTrackCount = qtAudioTracks.count
 
-let audioFileExporter = AudioFileExporter(inExportDirectory: exportDirectory!)
+let singleChannelFileExporter = SingleChannelAssetExporter(inExportDirectory: exportDirectory!)
 
 //dispatch group for track export threads
 let trackGroup = dispatch_group_create();
@@ -53,42 +55,92 @@ let trackQ = dispatch_queue_create("com.mvf.trackexportq", DISPATCH_QUEUE_CONCUR
 switch audioTrackCount
 {
 	case 2:
-		audioFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: "AudioPairOne")
+		let multiChannelFileExporter = MultiChannelAssetExporter(inAsset: qtAsset, fileName: filename!+"AudioPairOne")
+		multiChannelFileExporter.exportWaveFile(qtAudioTracks[0], selectedTrack2: qtAudioTracks[1])
+//		singleChannelFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: filename!+"AudioPairOne")
 	
 	case 4:
 		//assign each track to a async thread in the track export dispatch group.
 		dispatch_group_async(trackGroup, trackQ,
 			{
 				//start async dispatch
-				audioFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: "AudioPairOne")
+//				singleChannelFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: filename!+"AudioPairOne")
 			})
 
 		dispatch_group_async(trackGroup, trackQ,
 			{
 				//start async dispatch
-				audioFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: "AudioPairTwo")
+//				singleChannelFileExporter.exportStereoPair(qtAudioTracks[0], audioTrack2: qtAudioTracks[1], audioTrackName: filename!+"AudioPairTwo")
 			})
 	
 	default:
-		for i in 0...5
+		//off for testing !!!!!!!!!! WORKS !!!!!!!!!!!!!!!
+/*		for i in 0...5
 		{
 			dispatch_group_async(trackGroup, trackQ,
 			{
-				audioFileExporter.exportSingleStem(qtAudioTracks[i], audioTrackName: String(i+1))
+				singleChannelFileExporter.exportSingleStem(qtAudioTracks[i], audioTrackName: filename!+"Tr"+String(i+1))
 			})
+		}
+*/
+		//unwinding loop for extra channels
+		//was having issues with loop and async dispatch
+		guard audioTrackCount > 6 else
+		{
+			break;
+		}
+//		dispatch_group_async(trackGroup, trackQ,
+//		{
+			print("making tr7 & 8")
+		
+			let finalFilename = "/Users/akaramian/Desktop/PMT_OUTPUT_tr78.wav"// exportDirectory + "/" + filename! + String("Tr7") + "_" + String("Tr8")
+			print(finalFilename)
+			let multiChannelFileExporter = MultiChannelAssetExporter(inAsset: qtAsset, fileName: finalFilename)
+			multiChannelFileExporter.exportWaveFile(qtAudioTracks[6], selectedTrack2: qtAudioTracks[7])
+//			singleChannelFileExporter.exportStereoPair(qtAudioTracks[6], audioTrack2: qtAudioTracks[7], audioTrackName: filename!+String("Tr7")+"_"+String("Tr8"))
+//		})
+
+		guard audioTrackCount > 8 else
+		{
+			break;
 		}
 		
-		for var index = 6; index <= audioTrackCount-2; index += 2
+		dispatch_group_async(trackGroup, trackQ,
 		{
-			if (index >= audioTrackCount)
-			{
-				break
-			}
-			dispatch_group_async(trackGroup, trackQ,
-			{
-				audioFileExporter.exportStereoPair(qtAudioTracks[index], audioTrack2: qtAudioTracks[index+1], audioTrackName: String(index+1)+"_"+String(index+2))
-			})
+//			singleChannelFileExporter.exportStereoPair(qtAudioTracks[8], audioTrack2: qtAudioTracks[9], audioTrackName: filename!+String("Tr9")+"_"+String("Tr10"))
+		})
+
+		guard audioTrackCount > 10 else
+		{
+			break;
 		}
+		
+		dispatch_group_async(trackGroup, trackQ,
+		{
+//			singleChannelFileExporter.exportStereoPair(qtAudioTracks[10], audioTrack2: qtAudioTracks[11], audioTrackName: filename!+String("Tr11")+"_"+String("Tr12"))
+		})
+	
+		guard audioTrackCount > 12 else
+		{
+			break;
+		}
+		
+		dispatch_group_async(trackGroup, trackQ,
+		{
+//			singleChannelFileExporter.exportStereoPair(qtAudioTracks[12], audioTrack2: qtAudioTracks[13], audioTrackName: filename!+String("Tr13")+"_"+String("Tr14"))
+		})
+
+		guard audioTrackCount > 14 else
+		{
+			break;
+		}
+		
+		dispatch_group_async(trackGroup, trackQ,
+		{
+//			singleChannelFileExporter.exportStereoPair(qtAudioTracks[14], audioTrack2: qtAudioTracks[15], audioTrackName: filename!+String("Tr14")+"_"+String("Tr15"))
+		})
+
+
 }
 
 //wait for all async threads to finish
